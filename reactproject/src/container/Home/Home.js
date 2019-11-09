@@ -4,7 +4,7 @@ import VideoItem from '../../components/VideoItem/VideoItem'
 import youtubeAPI from '../../api/youtube'
 
 const Home = () => {
-    const videos = useLocation().state.videos;
+    const videos = (useLocation().state || {}).videos || [];
 
     return (
         <div className="ui container" style={{ paddingTop: '10px' }}>
