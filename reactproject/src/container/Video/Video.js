@@ -2,16 +2,23 @@ import React, {useState,useEffect} from 'react';
 import {useLocation} from 'react-router-dom'
 import youtubeAPI from '../../api/youtube'
 import VideoDetail from '../../components/VideoDetail/VideoDetail'
+import VideoItem from '../../components/VideoItem/VideoItem'
 
-const Video = () => {
-    
-    const [selectedVideo, setSelectedVideo] = useState(null);
+const Video = () => {    
     const [relatedVideos, setRelatedVideos] = useState([]);
+    const [selectedVideo, setSelectedVideo] = useState(null);
     const {id} = useLocation().state;
 
-    console.log(useLocation())
+    const getRelatedVideos = async id => {
+        const response = await youtubeAPI.get('/search', {
+            params: {
+                relatedToVideoId: id
+            }
+        });
+        setRelatedVideos(response.data.items);
+    }
 
-    const getVideoById = async (id) => {
+    const getVideoById = async id => {
         const response = await youtubeAPI.get('/videos', {
             params: {
                 id 
@@ -20,13 +27,9 @@ const Video = () => {
         setSelectedVideo(response.data.items[0])
     }
 
-    const getRelatedVideos = async (id) => {
-        const response = await youtubeAPI.get('/search', {
-            params: {
-                relatedToVideoId: id
-            }
-        });
-        setRelatedVideos(response.data.items);
+    const onVideoSelect = (video) => {
+        setSelectedVideo(video)
+        getRelatedVideos(video.id.videoId);
     }
 
     useEffect(() => {
@@ -43,7 +46,11 @@ const Video = () => {
                     </div>
                     <div className="five wide column">
                         <div className="ui relaxed divided list">
-                            {/* {lista de videos} */}
+                            {
+                                relatedVideos.map(relatedVideos => {
+                                    return <VideoItem video={relatedVideos} onVideoSelect={onVideoSelect}/>
+                                })
+                            }
                         </div>
                     </div>
                 </div>

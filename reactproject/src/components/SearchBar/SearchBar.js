@@ -29,8 +29,11 @@ const SearchBar = () => {
     }
 
     useEffect(() => {
-        getVideo()
-    }, [])
+        const handler = setTimeout(() => {
+            getVideo(term)
+        }, 1000);
+        return () => clearTimeout(handler)
+    }, [term])
 
     return (
         <div className="ui segment search-bar">
